@@ -6,10 +6,8 @@ exports.MONGODB = {
 	password: argv.db_password || 'DB_password'
 }
 
-exports.AUTH = {
-	data: argv.auth_data || { user: 'root' },
+exports.JWT = {
 	jwtTokenSecret: argv.auth_key || 'todosapijwttokensecret',
-	defaultPassword: argv.auth_default_password || 'root'
 }
 
 exports.APP = {

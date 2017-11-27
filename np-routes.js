@@ -38,8 +38,9 @@ const routes = app => {
 		};
 
 		// 排除auth的post请求
-		const isPostAuth = Object.is(req.url, '/auth') && Object.is(req.method, 'POST');
-		if (isPostAuth) {
+		const isPostLogin = Object.is(req.url, '/auth/login') && Object.is(req.method, 'POST');
+		const isPostRegister = Object.is(req.url, '/auth/register') && Object.is(req.method, 'POST');
+		if (isPostLogin || isPostRegister) {
 			next();
 			return false;
 		};
@@ -59,7 +60,9 @@ const routes = app => {
 	});
 
 	// Auth
-	app.all('/auth', controller.auth);
+	app.all('/auth', controller.auth.user);
+	app.post('/auth/login', controller.auth.login);
+	app.post('/auth/register', controller.auth.register);
 
 	// todo
 	app.all('/todo', controller.todo);

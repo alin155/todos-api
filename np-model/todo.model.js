@@ -9,6 +9,8 @@ const mongoose = require('np-mongodb').mongoose;
 // todos模型
 const todoSchema = new mongoose.Schema({
 
+    auth: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Auth'}],
+
     title: { type: String, required: true },
 
     isDelete: { type: Boolean, default: false },
