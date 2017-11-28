@@ -18,7 +18,7 @@ const md5Decode = pwd => {
 
 // get auth info
 authCtrl.user.GET = (req, res) => {
-	Auth.find({}, '-_id username slogan gravatar')
+	Auth.find({username: req.tokenUsername}, '-_id -password')
 	.then(([result = {}]) => {
 		console.log(result);
 		handleSuccess({ res, result, message: 'get authinfo success!' });
@@ -35,24 +35,23 @@ authCtrl.user.PUT = ({ body: auth }, res) => {
 	let { username, slogan, gravatar, password, new_password, rel_new_password } = auth;
 	
 	// 验证密码
-	if (!!password && ((!new_password || !rel_new_password) || !Object.is(new_password, rel_new_password))) {
+	if (!password || ((!new_password || !rel_new_password) || !Object.is(new_password, rel_new_password))) {
 		handleError({ res, message: '密码不一致或无效' });
 		return false;
 	};
 
-	if (!!password && [new_password, rel_new_password].includes(password)) {
+	if ([new_password, rel_new_password].includes(password)) {
 		handleError({ res, message: '新旧密码不可一致' });
 		return false;
 	};
 	
 	// 修改前查询验证
-	Auth.find({}, '_id username slogan gravatar password')
+	Auth.find({username: username}, '_id username slogan gravatar password')
 	.then(([_auth = {}]) => {
-		if (!!password && !Object.is(_auth.password, md5Decode(password))) {
+		if (!Object.is(_auth.password, md5Decode(password))) {
 			handleError({ res, message: '原密码不正确' }); 
 		} else {
-			if (!auth.password) delete auth.password;
-			if (auth.rel_new_password) auth.password = md5Decode(auth.rel_new_password);
+			auth.password = md5Decode(auth.rel_new_password);
 			return (_auth._id ? Auth.findByIdAndUpdate(_auth._id, auth, { new: true }) : new Auth(auth).save())
 		}
 	})

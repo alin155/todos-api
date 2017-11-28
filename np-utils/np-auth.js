@@ -16,13 +16,12 @@ const authToken = req => {
 
 // 验证权限
 const authIsVerified = req => {
-	const token = authToken(req);
-	console.log('token: ' + token);
+	const token = authToken(req);	
 	if (token) {
 		try {
-			const decodedToken = jwt.verify(token, config.JWT.jwtTokenSecret);
-			console.log('decodedTken: ' + decodedToken)
+			const decodedToken = jwt.verify(token, config.JWT.jwtTokenSecret);			
 			if (decodedToken.exp > Math.floor(Date.now() / 1000)) {
+				req.tokenUsername = decodedToken.data;
 				return true;
 			}
 		} catch (err) {}

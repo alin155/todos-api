@@ -32,7 +32,7 @@ const routes = app => {
 			const originVerified = (!origin	|| origin.includes('TodosApi.com')) && 
 									(!referer || referer.includes('TodosApi.com'))
 			if (!originVerified) {
-				res.status(403).jsonp({ code: 0, message: '来者何人！001' })
+				res.status(403).jsonp({ code: 0, message: '来者何人！' })
 				return false;
 			};
 		};
@@ -47,7 +47,7 @@ const routes = app => {
 
 		// 拦截所有非管路员的请求
 		if (!authIsVerified(req)) {
-			res.status(401).jsonp({ code: 0, message: '来者何人！002' })
+			res.status(401).jsonp({ code: 0, message: '来者何人！' })
 			return false;
 		};
 
