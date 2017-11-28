@@ -21,6 +21,7 @@ const authIsVerified = req => {
 	if (token) {
 		try {
 			const decodedToken = jwt.verify(token, config.JWT.jwtTokenSecret);
+			console.log('decodedTken: ' + decodedToken)
 			if (decodedToken.exp > Math.floor(Date.now() / 1000)) {
 				return true;
 			}

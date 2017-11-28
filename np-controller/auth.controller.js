@@ -20,6 +20,7 @@ const md5Decode = pwd => {
 authCtrl.user.GET = (req, res) => {
 	Auth.find({}, '-_id username slogan gravatar')
 	.then(([result = {}]) => {
+		console.log(result);
 		handleSuccess({ res, result, message: 'get authinfo success!' });
 	})
 	.catch(err => {
@@ -64,13 +65,13 @@ authCtrl.user.PUT = ({ body: auth }, res) => {
 };
 
 // login and sign Token
-authCtrl.login.POST = ({ body: { username, password }}, res) => {
+authCtrl.login.POST = ({ body: auth }, res) => {
 
+	let { username, password } = auth;
 	// Verify
-	if (typeof(username) === "undefined" || typeof(password) === "undefined") {
-		handleError({ res, err: { err: 'username or password undefined!' }, message: 'register err!' });
-		return false
-	};
+	if (!username || !password) {
+		handleError({ res, err: { err: 'username or password can\'t be empty!' }, message: 'register err!' });
+	}
 
 	Auth.find({username: username}, '-_id username password')
 	.then(([result = {}]) => {
@@ -95,19 +96,13 @@ authCtrl.login.POST = ({ body: { username, password }}, res) => {
 
 // register
 authCtrl.register.POST = ({ body: auth }, res) => {
-	console.log(auth);
-	let { username, password } = auth;
-
-	// Verify
-	if (typeof(auth.username) === "undefined" || typeof(auth.password) === "undefined") {
-		handleError({ res, err: { err: 'username or password undefined!' }, message: 'register err!' });
-		return false
-	};
-	if (auth.username === "" || auth.password === "") {
-		handleError({ res, err: { err: 'username or password can\'t be empty!' }, message: 'register err!' });
-		return false
-	};
 	
+	let { username, password } = auth;
+	
+	if (!username || !password) {
+		handleError({ res, err: { err: 'username or password can\'t be empty!' }, message: 'register err!' });
+	}
+
 	Auth.find({username: username})
 	.then(([_auth = {}]) =>{
 		if (typeof(_auth.username) === "undefined") {

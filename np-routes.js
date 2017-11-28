@@ -45,8 +45,8 @@ const routes = app => {
 			return false;
 		};
 
-		// 拦截所有非管路员的非get请求
-		if (!authIsVerified(req) && !Object.is(req.method, 'GET')) {
+		// 拦截所有非管路员的请求
+		if (!authIsVerified(req)) {
 			res.status(401).jsonp({ code: 0, message: '来者何人！002' })
 			return false;
 		};
