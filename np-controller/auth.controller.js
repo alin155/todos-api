@@ -18,9 +18,9 @@ const md5Decode = pwd => {
 
 // get auth info
 authCtrl.user.GET = (req, res) => {
-	Auth.find({username: req.tokenUsername}, '-_id -password')
+
+	Auth.find({username: req.tokenUsername}, '-_id -password -__v')
 	.then(([result = {}]) => {
-		console.log(result);
 		handleSuccess({ res, result, message: 'get authinfo success!' });
 	})
 	.catch(err => {
@@ -65,7 +65,7 @@ authCtrl.user.PUT = ({ body: auth }, res) => {
 
 // login and sign Token
 authCtrl.login.POST = ({ body: auth }, res) => {
-
+	
 	let { username, password } = auth;
 	// Verify
 	if (!username || !password) {
