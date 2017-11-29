@@ -17,9 +17,8 @@ todoCtrl.GET = (req, res) => {
 
 	Auth.find({username: req.tokenUsername}, '_id')
 	.then(([userId = {}]) => {
-		console.log(userId)
 		Todo.find({auth: userId}, '-__v')
-		.then((result) => {
+		.then(result => {
 			handleSuccess({ res, result, message: 'get todos success!' });
 		})
 		.catch(err => {
@@ -38,6 +37,7 @@ todoCtrl.POST = (req, res) => {
 	
 	if (!todo.title) {
 		handleError({ res, err: 'req body err!', message: 'todo title is required' });
+		return false;
 	}
 
 	Auth.find({username: req.tokenUsername}, '_id')
@@ -68,6 +68,7 @@ todoCtrl.PUT = (req, res) => {
 	
 	if (!todo._id) {
 		handleError({ res, err: 'req body err!', message: 'todo _id is required' });
+		return false;
 	}
 
 	delete todo.auth
@@ -75,7 +76,7 @@ todoCtrl.PUT = (req, res) => {
 
 	Todo.findByIdAndUpdate(todo._id, todo, {new: true})
 	.then(result => {
-		handleSuccess({ res, result: 'success', message: 'update todo success' });
+		handleSuccess({ res, result, message: 'update todo success' });
 	})
 	.catch(err => {
 		handleError({ res, err, message: 'update todo err' });
@@ -88,12 +89,14 @@ todoCtrl.DELETE = (req, res) => {
 	
 	if (!todo._id) {
 		handleError({ res, err: 'req body err!', message: 'todo _id is required' });
+		return false;
 	}
 
-	// update auth
+	// update auth.todos
 	Auth.update({todos: {$in: [todo._id]}}, {$pull: {todos: todo._id}})
 	.catch(err => {
 		handleError({ res, err, message: 'update auth err' });
+		return false;
 	})
 
 	// delete records
@@ -107,6 +110,7 @@ todoCtrl.DELETE = (req, res) => {
 	})
 	.catch(err => {
 		handleError({ res, err: '_id is\'t exist', message: 'delete records err' });
+		return false;
 	})
 
 	Todo.findByIdAndRemove(todo._id)
