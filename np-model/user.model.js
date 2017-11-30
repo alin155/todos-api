@@ -6,7 +6,7 @@
 
 const mongoose = require('np-mongodb').mongoose;
 
-const authSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
 
 	username: { type: String, required: true, unique: true},
 
@@ -19,5 +19,5 @@ const authSchema = new mongoose.Schema({
 	todos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Todo'}]
 });
 
-const Auth = mongoose.model('Auth', authSchema);
-module.exports = Auth;
+const User = mongoose.model('User', userSchema);
+module.exports = User;

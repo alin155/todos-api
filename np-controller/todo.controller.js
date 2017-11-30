@@ -6,7 +6,7 @@
 
 const { handleRequest, handleError, handleSuccess } = require('np-utils/np-handle');
 const Todo = require('np-model/todo.model');
-const Auth = require('np-model/auth.model');
+const User = require('np-model/user.model');
 const Record = require('np-model/record.model');
 const config = require('np-config');
 const jwt = require('jsonwebtoken');
@@ -15,9 +15,9 @@ const todoCtrl = {};
 // get todos by jwt-tokenUsername
 todoCtrl.GET = (req, res) => {
 
-	Auth.find({username: req.tokenUsername}, '_id')
+	User.find({username: req.tokenUsername}, '_id')
 	.then(([userId = {}]) => {
-		Todo.find({auth: userId}, '-__v')
+		Todo.find({user: userId}, '-__v')
 		.then(result => {
 			handleSuccess({ res, result, message: 'get todos success!' });
 		})
@@ -40,17 +40,17 @@ todoCtrl.POST = (req, res) => {
 		return false;
 	}
 
-	Auth.find({username: req.tokenUsername}, '_id')
+	User.find({username: req.tokenUsername}, '_id')
 	.then(([userId = {}]) => {
-		todo.auth = userId;
+		todo.user = userId;
 		new Todo(todo).save()
-		.then((result = auth) => {
-			Auth.findByIdAndUpdate(userId, {$addToSet: {todos: {$each: [result._id]}}}, { new: true })
+		.then((result = user) => {
+			User.findByIdAndUpdate(userId, {$addToSet: {todos: {$each: [result._id]}}}, { new: true })
 			.then(result => {
-				handleSuccess({ res, result: 'add todo success', message: 'update auth success' });
+				handleSuccess({ res, result: 'add todo success', message: 'update User success' });
 			})
 			.catch(err => {
-				handleError({ res, err, message: 'add todo success, but update auth err' });
+				handleError({ res, err, message: 'add todo success, but update User err' });
 			})
 		})
 		.catch(err => {
@@ -71,7 +71,7 @@ todoCtrl.PUT = (req, res) => {
 		return false;
 	}
 
-	delete todo.auth
+	delete todo.user
 	delete todo.records
 
 	Todo.findByIdAndUpdate(todo._id, todo, {new: true})
@@ -92,17 +92,16 @@ todoCtrl.DELETE = (req, res) => {
 		return false;
 	}
 
-	// update auth.todos
-	Auth.update({todos: {$in: [todo._id]}}, {$pull: {todos: todo._id}})
+	// update user.todos
+	User.update({todos: {$in: [todo._id]}}, {$pull: {todos: todo._id}})
 	.catch(err => {
-		handleError({ res, err, message: 'update auth err' });
+		handleError({ res, err, message: 'update user err' });
 		return false;
 	})
 
 	// delete records
 	Todo.find({_id: todo._id}, '-_id records')
 	.then(([result]) => {
-		console.log(result)
 		Record.remove({_id: {$in: result.records}})
 		.catch(err => {
 			handleError({ res, err, message: 'delete records err' });

@@ -11,12 +11,10 @@ const config = require('np-config');
 const jwt = require('jsonwebtoken');
 const recordCtrl = {};
 
-// get records by todo._id
+// get records by todoId
 recordCtrl.GET = (req, res) => {
    
-    console.log(req.query)
-
-    let todoId = req.query._id;
+    let todoId = req.query.todoId;
 
     if (!todoId) {
         handleError({ res, err: 'req query err!', message: 'todo._id is required' });
@@ -32,7 +30,7 @@ recordCtrl.GET = (req, res) => {
     })
 };
 
-// add record by text and todo._id
+// add record by text and todoId
 recordCtrl.POST = (req, res) => {
 
     const record = req.body;
@@ -66,8 +64,7 @@ recordCtrl.PUT = (req, res) => {
         return false;
     }
 
-    delete todoId
-    console.log(record)
+    delete record.todoId
     Record.findByIdAndUpdate(record._id, record, {new: true})
     .then(result => {
         handleSuccess({ res, result, message: 'change record success' });

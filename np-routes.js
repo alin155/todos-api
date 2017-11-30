@@ -32,14 +32,14 @@ const routes = app => {
 			const originVerified = (!origin	|| origin.includes('TodosApi.com')) && 
 									(!referer || referer.includes('TodosApi.com'))
 			if (!originVerified) {
-				res.status(403).jsonp({ code: 0, message: '来者何人！' })
+				res.status(403).jsonp({ code: 0, message: '来者何人1！' })
 				return false;
 			};
 		};
 
-		// 排除auth的post请求
-		const isPostLogin = Object.is(req.url, '/auth/login') && Object.is(req.method, 'POST');
-		const isPostRegister = Object.is(req.url, '/auth/register') && Object.is(req.method, 'POST');
+		// 排除user的post请求
+		const isPostLogin = Object.is(req.url, '/user/login') && Object.is(req.method, 'POST');
+		const isPostRegister = Object.is(req.url, '/user/register') && Object.is(req.method, 'POST');
 		if (isPostLogin || isPostRegister) {
 			next();
 			return false;
@@ -47,7 +47,7 @@ const routes = app => {
 
 		// 拦截所有非管路员的请求
 		if (!authIsVerified(req)) {
-			res.status(401).jsonp({ code: 0, message: '来者何人！' })
+			res.status(401).jsonp({ code: 0, message: '来者何人2！' })
 			return false;
 		};
 
@@ -59,15 +59,15 @@ const routes = app => {
 		res.jsonp(config.INFO);
 	});
 
-	// Auth
-	app.all('/auth', controller.auth.user);
-	app.post('/auth/login', controller.auth.login);
-	app.post('/auth/register', controller.auth.register);
+	// user
+	app.all('/user', controller.user.user);
+	app.post('/user/login', controller.user.login);
+	app.post('/user/register', controller.user.register);
 
-	// todo
+	// todos
 	app.all('/todo', controller.todo);
 
-	// record
+	// records
 	app.all('/record', controller.record);
 
 	// 404

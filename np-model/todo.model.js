@@ -9,7 +9,7 @@ const mongoose = require('np-mongodb').mongoose;
 // todos模型
 const todoSchema = new mongoose.Schema({
 
-    auth: { type: mongoose.Schema.Types.ObjectId, ref: 'Auth'},
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User'},
 
     title: { type: String, required: true },
 

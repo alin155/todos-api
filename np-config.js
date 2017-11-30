@@ -7,7 +7,7 @@ exports.MONGODB = {
 }
 
 exports.JWT = {
-	jwtTokenSecret: argv.auth_key || 'todosapijwttokensecret',
+	jwtTokenSecret: argv.user_key || 'todosapijwttokensecret',
 }
 
 exports.APP = {
